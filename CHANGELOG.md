@@ -1,4 +1,21 @@
 
+### v0.1.6
+
+Implementation of `generate/2` which support a list of the atoms
+
+`upper`, `lower`, `number` and `symbol`
+
+to represent which selections is made to generate a password.
+
+
+#### Example
+```
+1> erlPass:generate(10, [upper,lower]).
+"dwjbOuaADp"
+2> 
+```
+
+
 ### v0.1.5
 
 Reimplemented help function for `generate/5` for pattern matching
