@@ -8,7 +8,7 @@
    ]},
   {env,[]},
   {modules, []},
-
+  {maintainer, "Robert Lasu"},
   {licenses, ["Apache-2.0"]},
   {links, [{"Github", "https://github.com/thetelefon/erlPass"}]}
  ]}.

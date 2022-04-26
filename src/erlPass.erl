@@ -1,5 +1,4 @@
 %% @doc A password generator.
-%% This is the following text
 %% @author Robert Lasu
 %% @version 0.1.0
 %% @copyright 2022 Robert Lasu
@@ -34,6 +33,7 @@ seed() ->
 
 
 %% @doc Generates a password.
+%% @param Length: The length of password.
 %% @end
 -spec generate(Length, Upper, Lower, Number, Symbol) -> Pass when
     Length  ::integer(),

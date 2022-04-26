@@ -1,9 +1,10 @@
 erlPass
 =====
 
-An OTP library
+A simple password generator.
 
 Build
 -----
 
     $ rebar3 compile
+
