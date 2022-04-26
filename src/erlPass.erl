@@ -1,10 +1,10 @@
 %% @doc A password generator.
 %% @author Robert Lasu
 %% @version 0.1.0
-%% @copyright 2022 Robert Lasu
+%% @copyright 2022 Robert Lasu <robert.lasu@gmail.com>
 
 -module(erlPass).
--export([generate/5]).
+-export([generate/5, generate/2]).
 
 gen_number(B) -> integer_to_list(B rem 9).
 
@@ -23,6 +23,7 @@ seed() ->
 
 
 %% @doc Generates a password.
+%% @deprecated May be removed at any time
 %% @end
 -spec generate(Len, Up, Low, Num, Sym) -> Pass | {error, Reason} when
     Len    :: integer(),
@@ -35,9 +36,6 @@ seed() ->
 generate(Len,_,_,_,_) when Len < 1 -> {error, invalid_length};
 generate(Len, Up, Low, Num, Sym) -> generate(Len, Up, Low, Num, Sym, [], seed()).
 
-%% @doc Generate a password
-%% see {@link generate/5}
-%% @end
 -spec generate(Len, Up, Low, Num, Sym, Pass, Seed) -> RetPass when
     Len     :: integer(),
     Up      :: boolean(),
@@ -54,6 +52,8 @@ generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 1 -> generate(Up,
 generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 2 -> generate(Low, Len, Up, Low, Num, Sym, fun gen_lower/1, B, Pass);
 generate(Len, Up, Low, Num, Sym, Pass, {A, _}) when A rem 4 == 3 -> generate(Sym, Len, Up, Low, Num, Sym, fun gen_symbol/1, seed(), Pass).
 
+
+
 -spec generate(ToGen, Len, Up, Low, Num, Sym, Fun, Args, Pass) -> RetPass when
     ToGen    :: boolean(),
     Len      :: integer(),
@@ -68,3 +68,23 @@ generate(Len, Up, Low, Num, Sym, Pass, {A, _}) when A rem 4 == 3 -> generate(Sym
 generate(_, 0, _,_,_,_,_,_, Pass) -> Pass;
 generate(true, Len, U, L, N, S, Fun, B, Pass) -> generate(Len-1, U, L, N, S, [ Fun(B) | Pass], seed());
 generate(false, Len, U, L, N, S, _, _, Pass) -> generate(Len, U, L, N, S, Pass, seed()).
+
+
+%% @doc Generates a password.
+%%
+%% Instead of taking several arguments generate/2 takes an argument list.
+%% The list must contaion atoms upper, lower, number or symbol
+%% @end
+
+-spec generate(Len, ListOps) -> Password | {error, Reason} when
+    Len         :: integer(),
+    ListOps     :: list(),
+    Password    :: list(),
+    Reason      :: atom().
+generate(_,[]) -> {error, invalid_options};
+generate(Len,_) when Len < 1 -> {error, invalid_length};
+generate(Len, List) -> generate(Len, get_bool(upper, List), get_bool(lower, List), get_bool(number, List), get_bool(symbol, List), [], seed()).
+
+get_bool(_, []) -> false;
+get_bool(Expected,[Expected | _]) -> true;
+get_bool(Expected, [_ | Tail]) -> get_bool(Expected, Tail).
