@@ -12,10 +12,10 @@ gen_upper(B) -> [65 + (B rem 26)].
 
 gen_lower(B) -> [97 + (B rem 26)].
 
-gen_symbol({B, A}) when B rem 4 == 0 -> [32 + A rem 16];
-gen_symbol({B, A}) when B rem 4 == 1 -> [58 + A rem 7];
-gen_symbol({B, A}) when B rem 4 == 2 -> [91 + A rem 6];
-gen_symbol({B, A}) when B rem 4 == 3 -> [123 + A rem 4].
+gen_symbol({A, B}) when B rem 4 == 0 -> [32 + A rem 16];
+gen_symbol({A, B}) when B rem 4 == 1 -> [58 + A rem 7];
+gen_symbol({A, B}) when B rem 4 == 2 -> [91 + A rem 6];
+gen_symbol({A, B}) when B rem 4 == 3 -> [123 + A rem 4].
 
 seed() ->
     <<A:24, B:24>> = crypto:strong_rand_bytes(6),
@@ -23,15 +23,15 @@ seed() ->
 
 
 %% @doc Generates a password.
-%% @param Length: The length of password.
 %% @end
--spec generate(Len, Up, Low, Num, Sym) -> Pass when
-    Len   :: integer(),
-    Up    :: boolean(),
-    Low   :: boolean(),
-    Num   :: boolean(),
-    Sym   :: boolean(),
-    Pass  :: list().
+-spec generate(Len, Up, Low, Num, Sym) -> Pass | {error, Reason} when
+    Len    :: integer(),
+    Up     :: boolean(),
+    Low    :: boolean(),
+    Num    :: boolean(),
+    Sym    :: boolean(),
+    Pass   :: list(),
+    Reason :: atom().
 generate(Len,_,_,_,_) when Len < 1 -> {error, invalid_length};
 generate(Len, Up, Low, Num, Sym) -> generate(Len, Up, Low, Num, Sym, [], seed()).
 
@@ -52,7 +52,7 @@ generate(0,_,_,_,_, Pass, _) -> lists:flatten(Pass);
 generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 0 -> generate(Num, Len, Up, Low, Num, Sym, fun gen_number/1, B, Pass);
 generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 1 -> generate(Up, Len, Up, Low, Num, Sym, fun gen_upper/1, B, Pass);
 generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 2 -> generate(Low, Len, Up, Low, Num, Sym, fun gen_lower/1, B, Pass);
-generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 3 -> generate(Sym, Len, Up, Low, Num, Sym, fun gen_symbol/1, {B,A}, Pass).
+generate(Len, Up, Low, Num, Sym, Pass, {A, _}) when A rem 4 == 3 -> generate(Sym, Len, Up, Low, Num, Sym, fun gen_symbol/1, seed(), Pass).
 
 -spec generate(ToGen, Len, Up, Low, Num, Sym, Fun, Args, Pass) -> RetPass when
     ToGen    :: boolean(),
