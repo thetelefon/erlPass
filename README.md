@@ -1,5 +1,8 @@
 # erlPass
 
+![build](https://github.com/thetelefon/erlPass/actions/workflows/erlang.yml/badge.svg)
+
+
 An OTP library to generate passwords.
 
 
