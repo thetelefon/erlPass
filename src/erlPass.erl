@@ -4,18 +4,24 @@
 %% @copyright 2022 Robert Lasu <robert.lasu@gmail.com>
 
 -module(erlPass).
+-include_lib("eunit/include/eunit.hrl").
+
 -export([generate/5, generate/2]).
 
-gen_number(B) -> integer_to_list(B rem 9).
+gen_number(B) when is_integer(B) and not(B < 0) -> integer_to_list(B rem 9);
+gen_number(_) -> {error, badargs}.
 
-gen_upper(B) -> [65 + (B rem 26)].
+gen_upper(B) when is_integer(B) and not(B < 0) -> [65 + (B rem 26)];
+gen_upper(_) -> {error, badargs}.
 
-gen_lower(B) -> [97 + (B rem 26)].
+gen_lower(B) when is_integer(B) and not(B < 0) -> [97 + (B rem 26)];
+gen_lower(_) -> {error, badargs}.
 
-gen_symbol({A, B}) when B rem 4 == 0 -> [32 + A rem 16];
-gen_symbol({A, B}) when B rem 4 == 1 -> [58 + A rem 7];
-gen_symbol({A, B}) when B rem 4 == 2 -> [91 + A rem 6];
-gen_symbol({A, B}) when B rem 4 == 3 -> [123 + A rem 4].
+gen_symbol({A, B}) when (B rem 4 == 0) and not(A < 0) and is_integer(A)-> [32 + A rem 16];
+gen_symbol({A, B}) when (B rem 4 == 1) and not(A < 0) and is_integer(A)-> [58 + A rem 7];
+gen_symbol({A, B}) when (B rem 4 == 2) and not(A < 0) and is_integer(A)-> [91 + A rem 6];
+gen_symbol({A, B}) when (B rem 4 == 3) and not(A < 0) and is_integer(A)-> [123 + A rem 4];
+gen_symbol(_) -> {error, badargs}.
 
 seed() ->
     <<A:24, B:24>> = crypto:strong_rand_bytes(6),
@@ -72,19 +78,56 @@ generate(false, Len, U, L, N, S, _, _, Pass) -> generate(Len, U, L, N, S, Pass, 
 
 %% @doc Generates a password.
 %%
-%% Instead of taking several arguments generate/2 takes an argument list.
-%% The list must contaion atoms upper, lower, number or symbol
+%% `generate/2' takes the length of password and an argument list.
+%% 
+%% The list must contaion atoms `upper', `lower', `number' or `symbol'
 %% @end
 
--spec generate(Len, ListOps) -> Password | {error, Reason} when
+-spec generate(Len, OpsList) -> Password | {error, Reason} when
     Len         :: integer(),
-    ListOps     :: list(),
+    OpsList     :: list(),
     Password    :: list(),
     Reason      :: atom().
 generate(_,[]) -> {error, invalid_options};
 generate(Len,_) when Len < 1 -> {error, invalid_length};
-generate(Len, List) -> generate(Len, get_bool(upper, List), get_bool(lower, List), get_bool(number, List), get_bool(symbol, List), [], seed()).
+generate(Len, List) -> generate(Len, check(upper, List), check(lower, List), check(number, List), check(symbol, List), [], seed()).
 
-get_bool(_, []) -> false;
-get_bool(Expected,[Expected | _]) -> true;
-get_bool(Expected, [_ | Tail]) -> get_bool(Expected, Tail).
+check(_, []) -> false;
+check(Expected,[Expected | _]) -> true;
+check(Expected, [_ | Tail]) -> check(Expected, Tail).
+
+
+%% ----------------------------
+%%          Unit Tests
+%% ----------------------------
+%% @private
+gen_number_test() ->
+    ?assert(gen_number(-1) =:= {error, badargs}),
+    ?assert(gen_number(ew) =:= {error, badargs}),
+    ?assert(gen_number(123) =:= "6").
+%% @private
+gen_upper_test() ->
+    ?assert(gen_upper(-1) =:= {error, badargs}),
+    ?assert(gen_upper(ew) =:= {error, badargs}),
+    ?assert(gen_upper(123) =:= "T").
+%% @private
+gen_lower_test() ->
+    ?assert(gen_lower(-1) =:= {error, badargs}),
+    ?assert(gen_lower(ew) =:= {error, badargs}),
+    ?assert(gen_lower(123) =:= "t").
+%% @private
+gen_symbol_test() ->
+    ?assert(gen_symbol(-1) =:= {error, badargs}),
+    ?assert(gen_symbol(ew) =:= {error, badargs}),
+    ?assert(gen_symbol({123, 321}) =:= ">").
+%% @private
+generate_test() ->
+    Pass = generate(10, [upper, lower, symbol]),
+    ?assert(length(Pass) =:= 10).
+%% @private
+check_test() ->
+    ?assert(check(atom, []) =:= false),
+    ?assert(check(atom, [atom,atom2])),
+    ?assert(check(atom, [atom2, atom3]) =:= false).
+
+

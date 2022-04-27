@@ -1,16 +1,27 @@
-erlPass
-=====
+# erlPass
 
-A simple password generator.
+An OTP library to generate passwords.
+
+
+## Build
+
+    $ rebar3 compile
+
+
+## Test
+
+Simply run eunit with rebar3
+
+    $ rebar3 eunit
+
+
+## Usage
 
 Simple to use, just call the `generate/2` function with the 
 
-desired attributes in a list
+desired attributes in list.
 
-Usage
------
-
-#### Example
+### Example
 
 ```
 1> erlPass:generate(10, [upper,number,symbol]).
@@ -18,16 +29,10 @@ Usage
 2> 
 ```
 
-##### ***Deprecated***
+#### ***Deprecated***
 
 ```
 1> erlPass:generate(10, true, true, false, true).
 "mfNAA}$S,^"
 2> 
 ```
-
-
-Build
------
-
-    $ rebar3 compile
