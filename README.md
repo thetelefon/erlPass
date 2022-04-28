@@ -1,10 +1,20 @@
 # erlPass
 
 ![build](https://github.com/thetelefon/erlPass/actions/workflows/erlang.yml/badge.svg)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
 
 An OTP library to generate passwords.
 
+## Installation
+
+Add erlPass to your rebar.config:
+
+```
+{deps, [
+    erlPass
+    ]}.
+```
 
 ## Build
 

@@ -8,19 +8,23 @@
 
 -export([generate/5, generate/2]).
 
+gen_number(B) when not(is_integer(B)) -> {error, not_number};
 gen_number(B) when is_integer(B) and not(B < 0) -> integer_to_list(B rem 9);
 gen_number(_) -> {error, badargs}.
 
+gen_upper(B) when not(is_integer(B)) -> {error, not_number};
 gen_upper(B) when is_integer(B) and not(B < 0) -> [65 + (B rem 26)];
 gen_upper(_) -> {error, badargs}.
 
+gen_lower(B) when not(is_integer(B)) -> {error, not_number};
 gen_lower(B) when is_integer(B) and not(B < 0) -> [97 + (B rem 26)];
 gen_lower(_) -> {error, badargs}.
 
-gen_symbol({A, B}) when (B rem 4 == 0) and not(A < 0) and is_integer(A)-> [32 + A rem 16];
-gen_symbol({A, B}) when (B rem 4 == 1) and not(A < 0) and is_integer(A)-> [58 + A rem 7];
-gen_symbol({A, B}) when (B rem 4 == 2) and not(A < 0) and is_integer(A)-> [91 + A rem 6];
-gen_symbol({A, B}) when (B rem 4 == 3) and not(A < 0) and is_integer(A)-> [123 + A rem 4];
+gen_symbol({A, B}) when not(is_integer(A)) and not(is_integer(B)) -> {error, not_number};
+gen_symbol({A, B}) when (B rem 4 == 0) and not(A < 0) -> [32 + A rem 16];
+gen_symbol({A, B}) when (B rem 4 == 1) and not(A < 0) -> [58 + A rem 7];
+gen_symbol({A, B}) when (B rem 4 == 2) and not(A < 0) -> [91 + A rem 6];
+gen_symbol({A, B}) when (B rem 4 == 3) and not(A < 0) -> [123 + A rem 4];
 gen_symbol(_) -> {error, badargs}.
 
 seed() ->
@@ -103,17 +107,17 @@ check(Expected, [_ | Tail]) -> check(Expected, Tail).
 %% @private
 gen_number_test() ->
     ?assert(gen_number(-1) =:= {error, badargs}),
-    ?assert(gen_number(ew) =:= {error, badargs}),
+    ?assert(gen_number(ew) =:= {error, not_number}),
     ?assert(gen_number(123) =:= "6").
 %% @private
 gen_upper_test() ->
     ?assert(gen_upper(-1) =:= {error, badargs}),
-    ?assert(gen_upper(ew) =:= {error, badargs}),
+    ?assert(gen_upper(ew) =:= {error, not_number}),
     ?assert(gen_upper(123) =:= "T").
 %% @private
 gen_lower_test() ->
     ?assert(gen_lower(-1) =:= {error, badargs}),
-    ?assert(gen_lower(ew) =:= {error, badargs}),
+    ?assert(gen_lower(ew) =:= {error, not_number}),
     ?assert(gen_lower(123) =:= "t").
 %% @private
 gen_symbol_test() ->
