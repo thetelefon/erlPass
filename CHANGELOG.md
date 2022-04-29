@@ -10,6 +10,10 @@
 
 -->
 
+### v0.1.8
+
+- Added badges for tests and code coverage
+
 ### v0.1.7
 
 - Unit and Integration tests
