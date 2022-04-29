@@ -1,4 +1,4 @@
-name: CI
+name: codecov
 
 on:
 
@@ -20,12 +20,12 @@ jobs:
         run: rebar3 compile
       - name: Run tests
         run: rebar3 do eunit, cover
+
+      - name: Converts to JSON
+        run: rebar3 codecov analyze path="_build/test/cover"
   
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV }} # not required for public repos
-          files: ./_build/test/cover/eunit.coverdata # optional
+          files: ./codecov.JSON # optional
           verbose: true # optional (default = false)
-
-      #- name: Codecov
-      #  uses: codecov/codecov-action@v3.1.0
