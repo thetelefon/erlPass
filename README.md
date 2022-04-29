@@ -1,8 +1,8 @@
 # erlPass
 
-![build](https://github.com/thetelefon/erlPass/actions/workflows/erlang.yml/badge.svg)
+[![build](https://github.com/thetelefon/erlPass/actions/workflows/erlang.yml/badge.svg)](https://github.com/thetelefon/erlPass)
 [![codecov](https://codecov.io/gh/thetelefon/erlPass/branch/master/graph/badge.svg?token=GWYPMBYL96)](https://codecov.io/gh/thetelefon/erlPass)
-![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?logo=apache&logoColor=red)
 
 
 An OTP library to generate passwords.
