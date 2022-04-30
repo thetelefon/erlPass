@@ -1,6 +1,5 @@
 %% @doc A password generator.
 %% @author Robert Lasu
-%% @version 0.1.0
 %% @copyright 2022 Robert Lasu <robert.lasu@gmail.com>
 
 -module(erlPass).
