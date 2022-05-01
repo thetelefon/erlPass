@@ -5,7 +5,7 @@
 -module(erlPass).
 -include_lib("eunit/include/eunit.hrl").
 
--export([generate/5, generate/2]).
+-export([generate/2]).
 
 gen_number(B) when not(is_integer(B)) -> {error, not_number};
 gen_number(B) when is_integer(B) and not(B < 0) -> integer_to_list(B rem 9);
@@ -30,21 +30,6 @@ seed() ->
     <<A:24, B:24>> = crypto:strong_rand_bytes(6),
     {A,B}.
 
-
-%% @doc Generates a password.
-%% @deprecated May be removed at any time
-%% @end
--spec generate(Len, Up, Low, Num, Sym) -> Pass | {error, Reason} when
-    Len    :: integer(),
-    Up     :: boolean(),
-    Low    :: boolean(),
-    Num    :: boolean(),
-    Sym    :: boolean(),
-    Pass   :: list(),
-    Reason :: atom().
-generate(Len,_,_,_,_) when Len < 1 -> {error, invalid_length};
-generate(Len, Up, Low, Num, Sym) -> generate(Len, Up, Low, Num, Sym, [], seed()).
-
 -spec generate(Len, Up, Low, Num, Sym, Pass, Seed) -> RetPass when
     Len     :: integer(),
     Up      :: boolean(),
@@ -54,7 +39,6 @@ generate(Len, Up, Low, Num, Sym) -> generate(Len, Up, Low, Num, Sym, [], seed())
     Pass    :: list(),
     Seed    :: tuple(),
     RetPass :: list().
-generate(_,false,false,false,false,_,_) -> {error, no_char};
 generate(0,_,_,_,_, Pass, _) -> lists:flatten(Pass);
 generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 0 -> generate(Num, Len, Up, Low, Num, Sym, fun gen_number/1, B, Pass);
 generate(Len, Up, Low, Num, Sym, Pass, {A, B}) when A rem 4 == 1 -> generate(Up, Len, Up, Low, Num, Sym, fun gen_upper/1, B, Pass);
@@ -74,7 +58,6 @@ generate(Len, Up, Low, Num, Sym, Pass, {A, _}) when A rem 4 == 3 -> generate(Sym
     Args     :: term(),
     Pass     :: list(),
     RetPass  :: list().
-generate(_, 0, _,_,_,_,_,_, Pass) -> Pass;
 generate(true, Len, U, L, N, S, Fun, B, Pass) -> generate(Len-1, U, L, N, S, [ Fun(B) | Pass], seed());
 generate(false, Len, U, L, N, S, _, _, Pass) -> generate(Len, U, L, N, S, Pass, seed()).
 
@@ -122,11 +105,17 @@ gen_lower_test() ->
 gen_symbol_test() ->
     ?assert(gen_symbol(-1) =:= {error, badargs}),
     ?assert(gen_symbol(ew) =:= {error, badargs}),
-    ?assert(gen_symbol({123, 321}) =:= ">").
+    ?assert(gen_symbol({123, 321}) =:= ">"),
+    ?assert(gen_symbol({"Warden", clyff}) =:= {error, not_number}).
+
+
 %% @private
 generate_test() ->
-    Pass = generate(10, [upper, lower, symbol]),
-    ?assert(length(Pass) =:= 10).
+    Pass = generate(100, [upper, lower, symbol, number]),
+    generate(10, [lower, number]),
+    ?assert(length(Pass) =:= 100),
+    ?assert(generate(5,[]) =:= {error, invalid_options}),
+    ?assert(generate(0, [upper]) =:= {error, invalid_length}).
 %% @private
 check_test() ->
     ?assert(check(atom, []) =:= false),
