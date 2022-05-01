@@ -50,11 +50,3 @@ desired attributes in list.
 "4A0LE6\\_W@"
 2> 
 ```
-
-#### ***Deprecated***
-
-```
-1> erlPass:generate(10, true, true, false, true).
-"mfNAA}$S,^"
-2> 
-```

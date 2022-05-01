@@ -10,6 +10,12 @@
 
 -->
 
+### v0.1.9
+
+- Removed deprecated function `generate/5`
+- Added more extensive tests
+- Small bugfix
+
 ### v0.1.8
 
 - Added badges for tests and code coverage
