@@ -1,6 +1,6 @@
 {application, erlPass,
  [{description, "A password generator written in pure Erlang"},
-  {vsn, "0.1.9"},
+  {vsn, "0.2.0"},
   {registered, []},
   {applications,
    [kernel,

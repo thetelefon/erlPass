@@ -10,6 +10,10 @@
 
 -->
 
+### v0.2.0
+
+- It's now possible to specify the maximum number of occerrences for each of `upper`, `lower`, `number`, and `symbol` as a two-tuple e.g. `{upper, 3}`.
+
 ### v0.1.9
 
 - Removed deprecated function `generate/5`

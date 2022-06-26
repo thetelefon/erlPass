@@ -32,21 +32,22 @@ If you don't use rebar3 it's possibly to get the latest version from **[github](
 
 ## Test
 
-Simply run eunit with rebar3
+To run the tests call eunit via rebar3
 
     $ rebar3 eunit
 
 
 ## Usage
 
-Simple to use, just call the `generate/2` function with the 
-
-desired attributes in list.
+To generate a password call the `generate/2` function with the desired attributes in a list.
 
 ### Example
 
 ```
-1> erlPass:generate(10, [upper,number,symbol]).
+1> erlPass:generate(10, [upper,{number,3},symbol]).
 "4A0LE6\\_W@"
-2> 
+2>
 ```
+
+Note that `erlPass:generate(10, [upper, lower]).` is the same thing as writing `erlPass:generate(10, [{upper, 10}, {lower, 10}]).`
+and `erlPass:generate(10, [{upper, 0}]).` is the same as `erlPass:generate(10, []).`.
