@@ -12,7 +12,8 @@
 
 ### v0.2.0
 
-- It's now possible to specify the maximum number of occerrences for each of `upper`, `lower`, `number`, and `symbol` as a two-tuple e.g. `{upper, 3}`.
+- It's now possible to specify the **maximum** number of occerrences for each of `upper`, `lower`, `number`, and `symbol` as a two-tuple e.g. `{upper, 3}`.
+- `generate/1` is now implemented.
 
 ### v0.1.9
 
