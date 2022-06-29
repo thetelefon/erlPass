@@ -39,15 +39,17 @@ To run the tests call eunit via rebar3
 
 ## Usage
 
-To generate a password call the `generate/2` function with the desired attributes in a list.
+Call `generate/1` specifying the length of the password or to specify the attributes of the generated password, use `generate/2`
 
 ### Example
 
 ```
 1> erlPass:generate(10, [upper,{number,3},symbol]).
 "4A0LE6\\_W@"
-2>
+2> erlPass:generate(5).
+"iM{37"
+3>
 ```
 
-Note that `erlPass:generate(10, [upper, lower]).` is the same thing as writing `erlPass:generate(10, [{upper, 10}, {lower, 10}]).`
+Note that `erlPass:generate(10, [upper, lower]).` is the same as `erlPass:generate(10, [{upper, 10}, {lower, 10}]).`
 and `erlPass:generate(10, [{upper, 0}]).` is the same as `erlPass:generate(10, []).`.

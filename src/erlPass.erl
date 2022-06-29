@@ -148,7 +148,6 @@ create_ops_list_test() ->
 %% ----------------------------
 %%      Integration Tests
 %% ----------------------------
-
 %% @private
 generate_test() ->
     Pass = generate(100, [upper, lower, symbol, number]),
