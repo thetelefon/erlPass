@@ -5,13 +5,13 @@
 -module(erlPass).
 -include_lib("eunit/include/eunit.hrl").
 
--define(TBI(Msg), exit(self(), {tbi, Msg})).
+-define(TBI(Msg), exit(self(), {tbi, {?MODULE, ?LINE, Msg}})).
 -define(ERR(Msg), {error, {?MODULE, ?LINE, Msg}}).
 
 -export([generate/1, generate/2]).
 
 gen_number({_A,B}) when not(is_integer(B)) -> ?ERR(not_number);
-gen_number({_A,B}) when is_integer(B) and not(B < 0) -> integer_to_list(B rem 9);
+gen_number({_A,B}) when is_integer(B) and not(B < 0) -> integer_to_list(B rem 10);
 gen_number(_) -> ?ERR(badargs).
 
 gen_upper({_A,B}) when not(is_integer(B)) -> ?ERR(not_number);
@@ -33,9 +33,9 @@ seed() ->
     <<A:24, B:24>> = crypto:strong_rand_bytes(6),
     {A,B}.
 
-ops() -> #{upper => 0, lower => 0, number => 0, symbol => 0}.
+ops() -> #{upper => 0, lower => 0, number => 0, symbol => 0, exclude => ""}.
 
-get_amount(Map) -> lists:foldl(fun(X, Sum) -> X + Sum end, 0, maps:values(Map)).
+get_amount(Map) -> lists:foldl(fun(X, Sum) -> X + Sum end, 0, [X || {V,X} <- maps:to_list(Map), not(V == exclude)]).
 
 validate_ops(Len, Map, Nr) when Nr >= Len -> Map;
 validate_ops(_, _, _) -> ?ERR(to_few_chars).
@@ -55,16 +55,31 @@ create_ops_list(Len, [{Ops, Nr} | Tail], Map) when (is_number(Nr)) and (Nr >= 0)
         false ->
             ?ERR(invalid_options)
         end;
-create_ops_list(_, [{_,Nr} | _], _) when not(is_number(Nr))-> ?ERR(not_number);
+create_ops_list(Len, [{exclude, ExcChar} | Tail], Map) ->
+    create_ops_list(Len, Tail, maps:update(exclude, ExcChar, Map));
+create_ops_list(_, [{_,Nr} | _], _) when not(is_number(Nr))-> ?ERR(bad_args);
 create_ops_list(_,_,_) -> ?ERR(badargs).
+
+
+check_excluded([], _) -> true;
+check_excluded([NewChar | _], [NewChar]) -> false;
+check_excluded([_| List], NewChar) -> check_excluded(List, NewChar).
 
 generate(Len, OpsMap, Pass, Fun, Op) ->
     case maps:get(Op, OpsMap) of
         0 ->
             generate(Len, OpsMap, Pass, seed());
         Nr ->
-            NewMap = maps:update(Op, Nr-1, OpsMap),
-            generate(Len-1, NewMap, [Fun(seed()) | Pass], seed())
+            NewChar = Fun(seed()),
+            Bool = check_excluded(maps:get(exclude, OpsMap), NewChar),
+
+            if
+                Bool ->
+                    NewMap = maps:update(Op, Nr-1, OpsMap),            
+                    generate(Len-1, NewMap, [NewChar | Pass], seed());
+                true ->
+                    generate(Len, OpsMap, Pass, seed())
+                end
         end.
 
 generate(_, Err = {error, _}, _, _) -> Err;
@@ -110,7 +125,7 @@ gen_number_test() ->
     ?assert(R1 =:= badargs),
     {error, {_,_,R2}} = gen_number({sd,tq}),
     ?assert(R2 =:= not_number),
-    ?assert(gen_number({0, 123}) =:= "6").
+    ?assert(gen_number({0, 126}) =:= "6").
 %% @private
 gen_upper_test() ->
     {error, {_, _, R1}} = gen_upper({-1,-1}),
@@ -143,7 +158,7 @@ create_ops_list_test() ->
     {error, {_,_,R2}} = create_ops_list(10, [{fah,10}], ops()),
     ?assert(R2 =:= invalid_options),
     {error, {_,_,R3}} = create_ops_list(32, [{upper, "32"}], ops()),
-    ?assert(R3 =:= not_number).
+    ?assert(R3 =:= bad_args).
 
 %% ----------------------------
 %%      Integration Tests
@@ -151,12 +166,14 @@ create_ops_list_test() ->
 %% @private
 generate_test() ->
     Pass = generate(100, [upper, lower, symbol, number]),
-    generate(10, [lower, number]),
+    generate(100, [lower, number]),
     ?assert(length(Pass) =:= 100),
     {error, {_,_,R1}} = generate(5,[]),
     ?assert(R1 =:= no_options),
-    {error, {_,_,R2}} = generate(4, {upper,2}),
+    {error, {_,_,R2}} = generate(40, {upper,2}),
     ?assert(R2 =:= badargs),
-    _Pass2 = generate(50, [{upper,1}, lower, {number,2}, {symbol,9}]),
+    _Pass2 = generate(50, [{upper,1}, lower, {number,2}, {symbol,9}, {exclude, " !-.fdw"}]),
     {error, {_,_,R3}} = generate(0),
-    ?assert(R3 =:= invalid_length).
+    ?assert(R3 =:= invalid_length),
+    {error, {_,_,R4}} = generate(10, [{exclude, "ds"}]),
+    ?assert(R4 =:= to_few_chars).

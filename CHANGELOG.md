@@ -10,6 +10,20 @@
 
 -->
 
+### v0.3.0
+
+- Now able to exclude specified characters as a two-tuple `{exclude, ExcludedCharsAsString}` , e.g.
+
+```
+1> erlPass:generate(10, [{exclude, ":/!"}, symbol]).
+"#[,=^<`{|#"
+2> erlPass:generate(10, [{exclude, "123456789"], number]).
+"0000000000"
+3>
+```
+
+- Bug when generating numbers fixed, where not able to generate `9`
+
 ### v0.2.0
 
 - It's now possible to specify the **maximum** number of occerrences for each of `upper`, `lower`, `number`, and `symbol` as a two-tuple e.g. `{upper, 3}`.
