@@ -5,7 +5,7 @@
 [![build](https://github.com/thetelefon/erlPass/actions/workflows/erlang.yml/badge.svg)](https://github.com/thetelefon/erlPass)
 [![codecov](https://codecov.io/gh/thetelefon/erlPass/branch/master/graph/badge.svg?token=GWYPMBYL96)](https://codecov.io/gh/thetelefon/erlPass)
 [![Changelog](https://img.shields.io/badge/changelog-@hex.pm-purple)](https://hexdocs.pm/erlPass/changelog.html)
-[![Changelog](https://img.shields.io/badge/changelog-@github-ligthpurple)](https://github.com/thetelefon/{{name}}/blob/master/CHANGELOG.md)
+[![Changelog](https://img.shields.io/badge/changelog-@github-ligthpurple)](https://github.com/thetelefon/erlPass/blob/master/CHANGELOG.md)
 
 
 An OTP library to generate passwords.
