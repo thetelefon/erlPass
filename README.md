@@ -4,8 +4,8 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?logo=apache&logoColor=red)](https://www.apache.org/licenses/LICENSE-2.0)
 [![build](https://github.com/thetelefon/erlPass/actions/workflows/erlang.yml/badge.svg)](https://github.com/thetelefon/erlPass)
 [![codecov](https://codecov.io/gh/thetelefon/erlPass/branch/master/graph/badge.svg?token=GWYPMBYL96)](https://codecov.io/gh/thetelefon/erlPass)
-[![Changelog](https://img.shields.io/badge/changelog-@hex.pm-purple)](https://hexdocs.pm/erlPass/changelog.html)
 [![Changelog](https://img.shields.io/badge/changelog-@github-f000f0)](https://github.com/thetelefon/erlPass/blob/master/CHANGELOG.md)
+[![Changelog](https://img.shields.io/badge/changelog-@hex.pm-purple)](https://hexdocs.pm/erlPass/changelog.html)
 
 
 An OTP library to generate passwords.
