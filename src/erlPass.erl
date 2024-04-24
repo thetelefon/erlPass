@@ -92,7 +92,7 @@ generate(Len, OpsMap, Pass, {A,_B}) when A rem 4 == 3 -> generate(Len, OpsMap, P
 %% @doc Generates a password with length Len and options OpsList
 %%
 %% `generate/2' takes the length of password and a list of options.
-%% OpsList must contaion the atoms `upper', `lower', `number', `symbol' and/or
+%% OpsList must contain the atoms `upper', `lower', `number', `symbol' and/or
 %% tuples on the format `{upper, 2}', representing one of the atoms above and the maximum number of occurrences.
 %% @end
 -spec generate(Len, OpsList) -> Password | {error, Reason} when
