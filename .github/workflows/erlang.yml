@@ -5,22 +5,32 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+runs-on: ubuntu-latest
+
+container:
+      image: erlang:latest
+
 jobs:
 
-  build:
-
-    runs-on: ubuntu-latest
-
-    container:
-      image: erlang:22.0.7
-
+  build-and-test:
     steps:
     - uses: actions/checkout@v3
     - name: Compile
       run: rebar3 compile
     - name: Run tests
-      run: rebar3 eunit
+      run: rebar3 do eunit, cover
+
+  codecov:
+    - name: convert-t-json
+        run: rebar3 codecov analyze path="_build/test/cover"
+    - uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV }}
+        files: ./codecov.json
+        verbose: true
